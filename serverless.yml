@@ -18,12 +18,14 @@ functions:
       - http:
           path: users
           method: post
+          cors: true
   getUser:
     handler: src/infraestructure/handlers/get-user.handler
     events:
       - http:
           path: users/{id}
           method: get
+          cors: true
 
 resources:
   Resources:
