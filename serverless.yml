@@ -1,0 +1,40 @@
+service: nodejs-crud-hexagonal
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    TABLE_NAME: ${self:service}-table
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+functions:
+  createUser:
+    handler: src/infraestructure/handlers/create-user.handler
+    events:
+      - http:
+          path: users
+          method: post
+  getUser:
+    handler: src/infraestructure/handlers/get-user.handler
+    events:
+      - http:
+          path: users/{id}
+          method: get
+
+resources:
+  Resources:
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-table
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
